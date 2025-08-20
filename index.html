@@ -4,17 +4,21 @@
   <meta charset="utf-8">
   <title>&#8203;</title>
 
-  <!-- Open Graph Meta Tags -->
+  <!-- ไม่มี meta refresh / ไม่มี JS redirect -->
+
+  <!-- ให้ FB แสดงพรีวิวของ "หน้านี้" เอง ไม่ใช่ Shopee -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://shopee.co.th/">
+  <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/">
   <meta property="og:image" content="https://th-live-01.slatic.net/p/ff4800c032a727fc075a336826e9f0e1.png">
-  <meta property="og:site_name" content="Go.Link">
+  <!-- ไม่อยากโชว์หัวข้อ/คำบรรยาย ใส่ช่องว่างไว้ก็ได้ -->
+  <meta property="og:title" content=" ">
+  <meta property="og:description" content=" ">
 </head>
-<body>
-  <!-- กรณีมีคนเข้ามาหน้าเว็บตรง ๆ -->
-  <a href="https://shopee.co.th/" target="_blank">
-    <img src="https://th-live-01.slatic.net/p/ff4800c032a727fc075a336826e9f0e1.png" 
-         alt="Shopee" style="max-width:100%;height:auto;">
+<body style="margin:0;display:grid;place-items:center;min-height:100vh;background:#fff">
+  <!-- ผู้ใช้ต้อง "กดรูป" เอง ถึงจะไป Shopee -->
+  <a href="https://shopee.co.th/" target="_blank" rel="noopener">
+    <img src="https://th-live-01.slatic.net/p/ff4800c032a727fc075a336826e9f0e1.png"
+         alt="" style="max-width:100%;height:auto;display:block">
   </a>
 </body>
 </html>
