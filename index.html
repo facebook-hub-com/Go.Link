@@ -2,80 +2,58 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Canonical และ SEO เบื้องต้น -->
-  <link rel="canonical" href="https://shopee.co.th" />
   <title>Shopee</title>
-  <meta name="robots" content="noindex,nofollow" />
+  <link rel="canonical" href="https://shopee.co.th" />
 
   <!-- Open Graph สำหรับพรีวิว -->
   <meta property="og:type" content="website" />
-  <!-- ต้องการให้ url เว็บไซต์ เป็น Shopee -->
   <meta property="og:url" content="https://shopee.co.th" />
-  <!-- รูปภาพพรีวิวที่ต้องการให้แสดง -->
+  <meta property="og:title" content="ช้อปง่าย ปลอดภัย ที่ Shopee" />
+  <meta property="og:description" content="กดเพื่อไปที่ Shopee" />
   <meta property="og:image" content="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" />
-  <meta property="og:title" content="ช้อปเลยบน Shopee" />
-  <meta property="og:description" content="กดเพื่อเปิด Shopee ทันที" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
 
-  <!-- Twitter Card (เสริมให้ครบหลายแพลตฟอร์ม) -->
+  <!-- Twitter Card (สำรองสำหรับบางแพลตฟอร์ม) -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="ช้อปเลยบน Shopee" />
-  <meta name="twitter:description" content="กดเพื่อเปิด Shopee ทันที" />
+  <meta name="twitter:title" content="ช้อปง่าย ปลอดภัย ที่ Shopee" />
+  <meta name="twitter:description" content="กดเพื่อไปที่ Shopee" />
   <meta name="twitter:image" content="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" />
 
-  <style>
-    /* ข้อความสั้น ๆ ระหว่างรอ (ส่วนใหญ่ผู้ใช้จะไม่ทันเห็นเพราะรีไดเรกต์ทันที) */
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 2rem; }
-    .wrap { max-width: 720px; margin: 10vh auto; text-align: center; }
-    .spinner { width: 40px; height: 40px; border: 4px solid #ccc; border-top-color: #333; border-radius: 50%; margin: 1rem auto; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    a { word-break: break-all; }
-  </style>
+  <!-- กรณีปิด JavaScript: หน่วง 3 วินาทีแล้วค่อยเด้ง -->
+  <noscript>
+    <meta http-equiv="refresh" content="3; url=https://shopee.co.th">
+  </noscript>
 
+  <!-- ป้องกันการเปิดในแท็บใหม่อัตโนมัติ (เบราว์เซอร์ส่วนใหญ่บล็อก) ให้ redirect ภายในแท็บ -->
   <script>
-    (function () {
-      // รายชื่อบอท/แครอเลอร์ที่ต้อง "ไม่รีไดเรกต์" เพื่อให้มันอ่านแท็ก OG ได้
-      // ครอบคลุม Facebook, LINE, Twitter, Slack, Telegram, WhatsApp, Discord, iMessage, Google ฯลฯ
-      var botPatterns = [
-        'facebookexternalhit', 'Facebot', 'Meta-ExternalAgent',
-        'Twitterbot', 'Slackbot', 'Discordbot',
-        'TelegramBot', 'WhatsApp', 'WhatsApp/2', 'LinkedInBot',
-        'Googlebot', 'Google-InspectionTool', 'Pinterestbot',
-        'bitlybot', 'vkShare', 'Quora Link Preview', 'Applebot',
-        'iMessagePreview', 'SkypeUriPreview', 'OpenGraphBot'
-      ];
-      var ua = navigator.userAgent || '';
-      var isBot = botPatterns.some(function (name) {
-        return ua.indexOf(name) !== -1;
-      });
-
-      // ถ้ามีพารามิเตอร์ ?preview ให้ไม่รีไดเรกต์ (ใช้ทดสอบ)
-      var params = new URLSearchParams(location.search);
-      var previewMode = params.has('preview');
-
-      var target = 'https://shopee.co.th';
-
-      // ผู้ใช้จริง -> รีไดเรกต์ทันที
-      if (!isBot && !previewMode) {
-        // ใช้ replace เพื่อไม่ให้ปุ่ม Back พาผู้ใช้กลับมาหน้านี้
-        window.location.replace(target);
-      }
-
-      // ถ้าเป็นบอทหรือเปิดโหมด preview ก็ไม่ทำอะไร ปล่อยให้บอทอ่าน OG tags
-    })();
+    // หน่วง ~1.5 วินาที เพื่อให้บ็อตของโซเชียลอ่าน OG tags ได้ก่อน
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        // ใช้ replace เพื่อไม่ให้ย้อนกลับมาหน้านี้เมื่อกด Back
+        window.location.replace('https://shopee.co.th');
+      }, 1500);
+    });
   </script>
 
-  <!-- Fallback สำหรับผู้ใช้ที่ปิด JavaScript -->
-  <noscript>
-    <meta http-equiv="refresh" content="0;url=https://shopee.co.th">
-  </noscript>
+  <style>
+    /* หน้าจอระหว่างรอ redirect */
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif; }
+    .wrap { min-height: 100dvh; display: grid; place-items: center; text-align: center; padding: 24px; }
+    img { max-width: 90vw; height: auto; border-radius: 12px; }
+    p { color: #555; }
+    a { color: #e74c3c; text-decoration: none; }
+  </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="spinner" aria-hidden="true"></div>
-    <h1>กำลังพาไปที่ Shopee…</h1>
-    <p>หากไม่เด้งอัตโนมัติ <a href="https://shopee.co.th">คลิกที่นี่เพื่อไปยัง Shopee</a></p>
+    <div>
+      <img alt="Shopee Preview" src="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" />
+      <h1>กำลังพาไปที่ Shopee…</h1>
+      <p>ถ้าไม่เด้งอัตโนมัติ <a href="https://shopee.co.th">คลิกที่นี่</a></p>
+    </div>
   </div>
 </body>
 </html>
