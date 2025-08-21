@@ -5,17 +5,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>&#8203;</title>
 
-  <!-- ตั้งให้โซเชียลพรีวิวหน้านี้ -->
+  <!-- ใช้ URL จริงของหน้านี้ -->
   <link rel="canonical" href="https://YOUR_USER.github.io/YOUR_REPO/" />
+
+  <!-- ให้โซเชียลพรีวิวจากหน้านี้ -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/" />
   <meta property="og:image" content="https://shorturl.asia/6ZBaf" />
   <meta property="og:title" content=" " />
   <meta property="og:description" content=" " />
 
-  <!-- (ทางเลือก) Twitter card -->
+  <!-- (ทางเลือก) Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://shorturl.asia/6ZBaf" />
+
+  <!-- ช่วยให้โหลดปลายทางไวขึ้น -->
+  <link rel="dns-prefetch" href="//shopee.co.th">
+  <link rel="preconnect" href="https://shopee.co.th" crossorigin>
 
   <style>
     html,body{height:100%}
@@ -29,7 +35,7 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- เนื้อหาหน้าพรีวิว -->
+    <!-- หน้าพรีวิว -->
     <img src="https://shorturl.asia/6ZBaf" alt="">
     <div id="status" class="muted">กำลังเปิด Shopee อัตโนมัติในแท็บใหม่…</div>
     <div id="fallback">
@@ -41,12 +47,12 @@
   <script>
     (function () {
       const TARGET = 'https://shopee.co.th/';
-      const TRY_WINDOW_MS = 2000;      // ช่วงเวลาที่จะพยายามเปิดแท็บใหม่อย่างถี่ ๆ
+      const TRY_WINDOW_MS = 2000;      // ช่วงเวลาที่จะพยายามอย่างถี่
       const RETRY_INTERVAL_MS = 120;   // ความถี่ในการลองซ้ำ
       let opened = false;
       let timer = null;
 
-      function markOpened() {
+      function done() {
         opened = true;
         clearInterval(timer);
         const st = document.getElementById('status');
@@ -64,31 +70,32 @@
       function tryOpenOnce() {
         if (opened) return;
 
-        // วิธีที่ 1: เปิดตรง
+        // วิธี 1: เปิดตรง
         try {
           const w1 = window.open(TARGET, '_blank', 'noopener,noreferrer');
-          if (w1 && !w1.closed) return markOpened();
+          if (w1 && !w1.closed) return done();
         } catch (e) {}
 
-        // วิธีที่ 2: ลิงก์เสมือน + คลิกโปรแกรมมิ่ง
+        // วิธี 2: ลิงก์เสมือน + click โปรแกรมมิ่ง
         try {
           const a = document.createElement('a');
           a.href = TARGET;
           a.target = '_blank';
           a.rel = 'noopener';
-          a.style.display = 'none';
+          a.style.position = 'absolute';
+          a.style.left = '-9999px';
           document.body.appendChild(a);
           a.click();
           setTimeout(() => a.remove(), 100);
         } catch (e) {}
 
-        // วิธีที่ 3: เปิด about:blank แล้วเปลี่ยน location
+        // วิธี 3: เปิด about:blank แล้วตั้ง location
         try {
           const w2 = window.open('', '_blank', 'noopener');
           if (w2) {
             try { w2.opener = null; } catch (e) {}
             w2.location = TARGET;
-            if (!w2.closed) return markOpened();
+            if (!w2.closed) return done();
           }
         } catch (e) {}
       }
@@ -96,7 +103,7 @@
       // เริ่มพยายามทันที
       tryOpenOnce();
 
-      // ลองซ้ำอย่างถี่ในช่วงสั้น ๆ (ช่วยให้ผ่านบาง in-app browsers)
+      // ลองซ้ำอย่างถี่ในกรอบเวลา TRY_WINDOW_MS
       const start = Date.now();
       timer = setInterval(() => {
         if (opened) return clearInterval(timer);
@@ -108,16 +115,17 @@
         tryOpenOnce();
       }, RETRY_INTERVAL_MS);
 
-      // ถ้ามีการสัมผัส/กดคีย์ใด ๆ ระหว่างนี้ ให้พยายามอีกครั้งทันที (บางเบราว์เซอร์จะยอมในจังหวะนี้)
+      // บางเบราว์เซอร์ยอมในอีเวนต์เหล่านี้ แม้ผู้ใช้ไม่ได้ "กดปุ่มเปิด" โดยตรง
       const nudge = () => { if (!opened) tryOpenOnce(); };
-      document.addEventListener('pointerdown', nudge, { once: true, passive: true });
-      document.addEventListener('keydown', nudge, { once: true });
-
-      // บางอุปกรณ์อนุญาตตอน visibility เปลี่ยน
-      document.addEventListener('visibilitychange', () => {
-        if (!opened && document.visibilityState === 'visible') tryOpenOnce();
-      });
+      document.addEventListener('visibilitychange', nudge, { passive: true });
+      document.addEventListener('DOMContentLoaded', nudge, { once: true });
+      window.addEventListener('load', nudge, { once: true });
     })();
   </script>
+
+  <noscript>
+    <!-- ถ้าปิด JS จะไม่สามารถเปิดแท็บที่ 2 อัตโนมัติได้ -->
+    ต้องเปิดใช้งาน JavaScript เพื่อเปิด Shopee อัตโนมัติ
+  </noscript>
 </body>
 </html>
