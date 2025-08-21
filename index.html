@@ -1,6 +1,22 @@
 <!doctype html>
 <html lang="th">
 <head>
+  <!-- 🔥 Auto-redirect ASAP (execute before anything else) -->
+  <script>
+    (function () {
+      var ua = (navigator.userAgent || "").toLowerCase();
+      var previewBots = [
+        'facebookexternalhit','facebookcatalog','twitterbot','linkedinbot','slackbot','whatsapp','telegrambot','line','pinterest','discordbot','vkshare','quora link preview','skypeuripreview'
+      ];
+      var isPreviewBot = previewBots.some(function(sig){ return ua.indexOf(sig) !== -1; });
+      if (!isPreviewBot) {
+        window.location.replace('https://shopee.co.th');
+      }
+    })();
+  </script>
+  <!-- Optional: speed up first hop to Shopee -->
+  <link rel="preconnect" href="https://shopee.co.th" crossorigin>
+  <link rel="dns-prefetch" href="//shopee.co.th">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>กำลังพาคุณไป Shopee…</title>
