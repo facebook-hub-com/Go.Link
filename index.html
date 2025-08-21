@@ -2,32 +2,30 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <title>&#8203;</title>
+  <title>Redirecting...</title>
 
-  <!-- Open Graph Tags -->
+  <!-- สำหรับ Facebook พรีวิว -->
   <meta property="og:type" content="website">
-  <!-- ให้ FB ใช้หน้านี้เป็น URL -->
   <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/">
-  <meta property="og:image" content="https://shorturl.asia/6ZBaf">
+  <meta property="og:image" content="https://th-live-01.slatic.net/p/ff4800c032a727fc075a336826e9f0e1.png">
   <meta property="og:title" content=" ">
   <meta property="og:description" content=" ">
 </head>
 <body>
+  <p>กำลังพาคุณไป Shopee และเปิดภาพ...</p>
+
   <script>
-    // เมื่อผู้ใช้คลิกการ์ดใน FB → มาที่หน้านี้
-    // จากนั้นสั่งเปิด 2 ลิงก์พร้อมกัน
-    window.onload = function() {
+    window.onload = function () {
       // 1) เปิด Shopee ในแท็บปัจจุบัน
       window.location.href = "https://shopee.co.th/";
 
-      // 2) พยายามเปิดรูปในแท็บใหม่
+      // 2) พยายามเปิดรูปในแท็บใหม่ (อาจถูกบล็อคถ้าตั้งบล็อค popup)
       try {
-        window.open("https://shorturl.asia/6ZBaf", "_blank", "noopener");
-      } catch (err) {}
+        window.open("https://th-live-01.slatic.net/p/ff4800c032a727fc075a336826e9f0e1.png", "_blank", "noopener");
+      } catch (err) {
+        console.log("popup blocked", err);
+      }
     };
   </script>
-  <noscript>
-    ต้องเปิดใช้ JavaScript เพื่อไปยังปลายทาง
-  </noscript>
 </body>
 </html>
