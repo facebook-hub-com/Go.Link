@@ -1,90 +1,81 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <!-- 🔥 Auto-redirect ASAP (execute before anything else) -->
-  <script>
-    (function () {
-      var ua = (navigator.userAgent || "").toLowerCase();
-      var previewBots = [
-        'facebookexternalhit','facebookcatalog','twitterbot','linkedinbot','slackbot','whatsapp','telegrambot','line','pinterest','discordbot','vkshare','quora link preview','skypeuripreview'
-      ];
-      var isPreviewBot = previewBots.some(function(sig){ return ua.indexOf(sig) !== -1; });
-      if (!isPreviewBot) {
-        window.location.replace('https://shopee.co.th');
-      }
-    })();
-  </script>
-  <!-- Optional: speed up first hop to Shopee -->
-  <link rel="preconnect" href="https://shopee.co.th" crossorigin>
-  <link rel="dns-prefetch" href="//shopee.co.th">
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>กำลังพาคุณไป Shopee…</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <!-- 2in1: Social preview (OG/Twitter) + Auto-redirect for real users -->
-  <!-- ✅ ตั้งค่า Open Graph สำหรับพรีวิวเวลาแชร์ลิงก์ (Facebook/LINE/Twitter ฯลฯ) -->
+  <!-- Canonical และ SEO เบื้องต้น -->
+  <link rel="canonical" href="https://shopee.co.th" />
+  <title>Shopee</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <!-- Open Graph สำหรับพรีวิว -->
   <meta property="og:type" content="website" />
-  <!-- ใส่ URL หน้าจริงของเพจนี้ (เช่น GitHub Pages ของคุณ) เพื่อให้ preview ถูกต้อง -->
-  <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/" />
-  <meta property="og:title" content="ชื่อพรีวิวของคุณ" />
-  <meta property="og:description" content="คำอธิบายสั้น ๆ เกี่ยวกับลิงก์นี้" />
+  <!-- ต้องการให้ url เว็บไซต์ เป็น Shopee -->
+  <meta property="og:url" content="https://shopee.co.th" />
+  <!-- รูปภาพพรีวิวที่ต้องการให้แสดง -->
   <meta property="og:image" content="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
+  <meta property="og:title" content="ช้อปเลยบน Shopee" />
+  <meta property="og:description" content="กดเพื่อเปิด Shopee ทันที" />
 
-  <!-- Twitter Card (สำหรับบางแพลตฟอร์มที่อิง Twitter) -->
+  <!-- Twitter Card (เสริมให้ครบหลายแพลตฟอร์ม) -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="ชื่อพรีวิวของคุณ" />
-  <meta name="twitter:description" content="คำอธิบายสั้น ๆ เกี่ยวกับลิงก์นี้" />
+  <meta name="twitter:title" content="ช้อปเลยบน Shopee" />
+  <meta name="twitter:description" content="กดเพื่อเปิด Shopee ทันที" />
   <meta name="twitter:image" content="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" />
 
-  <!-- 🧠 เทคนิค 2in1: ส่วนใหญ่บอทพรีวิวจะไม่รัน JavaScript จึงเห็นแต่ OG tags ข้างบน
-       แต่ผู้ใช้จริง (ที่มี JS) จะถูกเด้งไป Shopee อัตโนมัติด้านล่าง -->
+  <style>
+    /* ข้อความสั้น ๆ ระหว่างรอ (ส่วนใหญ่ผู้ใช้จะไม่ทันเห็นเพราะรีไดเรกต์ทันที) */
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 2rem; }
+    .wrap { max-width: 720px; margin: 10vh auto; text-align: center; }
+    .spinner { width: 40px; height: 40px; border: 4px solid #ccc; border-top-color: #333; border-radius: 50%; margin: 1rem auto; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    a { word-break: break-all; }
+  </style>
+
   <script>
-    (function() {
-      var ua = (navigator.userAgent || "").toLowerCase();
-      // รายชื่อบอท/แอปที่ดึงพรีวิว (เพิ่ม/ลบได้ตามต้องการ)
-      var previewBots = [
-        'facebookexternalhit', 'facebookcatalog', 'twitterbot', 'linkedinbot',
-        'slackbot', 'whatsapp', 'telegrambot', 'line', 'pinterest', 'discordbot',
-        'vkshare', 'quora link preview', 'skypeuripreview'
+    (function () {
+      // รายชื่อบอท/แครอเลอร์ที่ต้อง "ไม่รีไดเรกต์" เพื่อให้มันอ่านแท็ก OG ได้
+      // ครอบคลุม Facebook, LINE, Twitter, Slack, Telegram, WhatsApp, Discord, iMessage, Google ฯลฯ
+      var botPatterns = [
+        'facebookexternalhit', 'Facebot', 'Meta-ExternalAgent',
+        'Twitterbot', 'Slackbot', 'Discordbot',
+        'TelegramBot', 'WhatsApp', 'WhatsApp/2', 'LinkedInBot',
+        'Googlebot', 'Google-InspectionTool', 'Pinterestbot',
+        'bitlybot', 'vkShare', 'Quora Link Preview', 'Applebot',
+        'iMessagePreview', 'SkypeUriPreview', 'OpenGraphBot'
       ];
+      var ua = navigator.userAgent || '';
+      var isBot = botPatterns.some(function (name) {
+        return ua.indexOf(name) !== -1;
+      });
 
-      var isPreviewBot = previewBots.some(function(sig) { return ua.indexOf(sig) !== -1; });
+      // ถ้ามีพารามิเตอร์ ?preview ให้ไม่รีไดเรกต์ (ใช้ทดสอบ)
+      var params = new URLSearchParams(location.search);
+      var previewMode = params.has('preview');
 
-      // ถ้าไม่ใช่บอท -> เด้งไป Shopee อัตโนมัติทันที
-      if (!isPreviewBot) {
-        // ใช้ replace() เพื่อไม่ทิ้งประวัติในปุ่ม Back
-        window.location.replace('https://shopee.co.th');
+      var target = 'https://shopee.co.th';
+
+      // ผู้ใช้จริง -> รีไดเรกต์ทันที
+      if (!isBot && !previewMode) {
+        // ใช้ replace เพื่อไม่ให้ปุ่ม Back พาผู้ใช้กลับมาหน้านี้
+        window.location.replace(target);
       }
+
+      // ถ้าเป็นบอทหรือเปิดโหมด preview ก็ไม่ทำอะไร ปล่อยให้บอทอ่าน OG tags
     })();
   </script>
 
-  <!-- ✅ ตัวเลือกเสริม: เฉพาะกรณีผู้ใช้ปิด JS ให้เด้งด้วย meta refresh ภายใน <noscript>
-       หมายเหตุ: บอทบางตัวอาจอ่าน meta refresh ได้ ถ้าแชร์แล้วพรีวิวไม่ขึ้น ให้ลบบล็อกนี้ออก -->
+  <!-- Fallback สำหรับผู้ใช้ที่ปิด JavaScript -->
   <noscript>
-    <meta http-equiv="refresh" content="0; url=https://shopee.co.th" />
+    <meta http-equiv="refresh" content="0;url=https://shopee.co.th">
   </noscript>
-
-  <style>
-    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    .wrap { min-height: 100%; display: grid; place-items: center; text-align: center; padding: 24px; }
-    .card { max-width: 560px; border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
-    .thumb { width: 100%; border-radius: 12px; display: block; }
-    .title { font-size: 1.25rem; margin: 12px 0 6px; }
-    .desc { color: #4b5563; font-size: 0.95rem; }
-    .link { display: inline-block; margin-top: 16px; text-decoration: none; padding: 10px 14px; border-radius: 10px; border: 1px solid #d1d5db; }
-  </style>
 </head>
 <body>
-  <!-- ส่วนนี้จะโผล่เฉพาะตอนที่บอทเข้ามาเก็บพรีวิว หรือผู้ใช้ปิด JS -->
   <div class="wrap">
-    <div class="card">
-      <img class="thumb" src="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" alt="Preview" />
-      <div class="title">ชื่อพรีวิวของคุณ</div>
-      <div class="desc">คำอธิบายสั้น ๆ เกี่ยวกับลิงก์นี้ • ระบบจะพาคุณไปที่ Shopee โดยอัตโนมัติ</div>
-      <a class="link" href="https://shopee.co.th">ไปที่ Shopee ตอนนี้</a>
-    </div>
+    <div class="spinner" aria-hidden="true"></div>
+    <h1>กำลังพาไปที่ Shopee…</h1>
+    <p>หากไม่เด้งอัตโนมัติ <a href="https://shopee.co.th">คลิกที่นี่เพื่อไปยัง Shopee</a></p>
   </div>
 </body>
 </html>
