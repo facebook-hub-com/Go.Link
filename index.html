@@ -5,41 +5,75 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>&#8203;</title>
 
-  <!-- ใช้ URL ของหน้านี้จริงๆ -->
+  <!-- ใช้ URL จริงของหน้านี้ -->
   <link rel="canonical" href="https://YOUR_USER.github.io/YOUR_REPO/" />
 
-  <!-- Open Graph สำหรับพรีวิว -->
+  <!-- ให้โซเชียลอ่านพรีวิวจาก "หน้านี้" -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/" />
   <meta property="og:image" content="https://shorturl.asia/6ZBaf" />
   <meta property="og:title" content=" " />
   <meta property="og:description" content=" " />
 
+  <!-- Twitter card (ทางเลือก) -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://shorturl.asia/6ZBaf" />
+
+  <!-- ช่วยให้โหลด Shopee ไวขึ้นเล็กน้อย -->
+  <link rel="dns-prefetch" href="//shopee.co.th">
+  <link rel="preconnect" href="https://shopee.co.th" crossorigin>
+  <meta name="referrer" content="no-referrer" />
+  <style>
+    html,body{height:100%}
+    body{margin:0;display:grid;place-items:center;background:#fff;font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif}
+    .wrap{display:grid;gap:16px;place-items:center;padding:16px;text-align:center}
+    .img{max-width:100%;height:auto;display:block;border-radius:12px}
+    #fallback{display:none}
+    .btn{display:inline-block;padding:12px 18px;border-radius:10px;border:1px solid #ddd;text-decoration:none}
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <!-- เนื้อหาหน้าพรีวิวของคุณ (ไม่เกี่ยวกับ OG bot) -->
+    <img class="img" src="https://shorturl.asia/6ZBaf" alt="">
+    <div id="fallback">
+      <div>เบราว์เซอร์ของคุณบล็อกการเปิดแท็บอัตโนมัติ</div>
+      <a class="btn" href="https://shopee.co.th/" target="_blank" rel="noopener">เปิด Shopee</a>
+    </div>
+  </div>
+
   <script>
     (function () {
       const SHOPEE_URL = 'https://shopee.co.th/';
-      const IMAGE_URL  = 'https://shorturl.asia/6ZBaf';
+      let opened = false;
 
-      try {
-        // 1) เปิด Shopee เป็น "แท็บใหม่" ก่อน (จะเป็นแท็บที่ 2)
-        window.open(SHOPEE_URL, '_blank', 'noopener,noreferrer');
-      } catch (e) {
-        // เงียบไว้ถ้าโดนบล็อก
+      function tryOpen() {
+        if (opened) return;
+        let w = null;
+        try {
+          // พยายามเปิด Shopee ใน "แท็บที่ 2" โดยไม่เปลี่ยนแท็บหลัก
+          w = window.open(SHOPEE_URL, '_blank', 'noopener,noreferrer');
+        } catch (e) { /* เงียบไว้ */ }
+        if (w && !w.closed) {
+          opened = true;
+          // คงโฟกัสไว้ที่แท็บปัจจุบัน (หน้าพรีวิว)
+          try { window.focus(); } catch (e) {}
+        } else {
+          // ถ้าถูกบล็อก ให้แสดงปุ่มสำรอง
+          const fb = document.getElementById('fallback');
+          if (fb) fb.style.display = 'block';
+        }
       }
 
-      // 2) จากนั้นให้ "แท็บปัจจุบัน" ไปยังรูปภาพ (แท็บที่ 1)
-      // ใช้ replace() เพื่อไม่ทิ้งประวัติย้อนกลับ
-      window.location.replace(IMAGE_URL);
+      // พยายามเปิดทันที และลองซ้ำสั้นๆ อีกครั้ง (บางเบราว์เซอร์ยอมรอบหลัง)
+      tryOpen();
+      setTimeout(tryOpen, 300);
     })();
   </script>
 
   <noscript>
-    <!-- ถ้าผู้ใช้ปิด JS: อย่างน้อยแสดงรูปภาพ -->
-    <meta http-equiv="refresh" content="0;url=https://shorturl.asia/6ZBaf" />
+    <!-- ถ้าปิด JS จะไม่มีการเปิดแท็บใหม่อัตโนมัติ -->
+    ต้องเปิดใช้งาน JavaScript เพื่อเปิด Shopee อัตโนมัติ
   </noscript>
 </body>
 </html>
