@@ -2,200 +2,73 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>&#8203;</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>กำลังพาคุณไป Shopee…</title>
 
-  <!-- ใส่ URL จริงของหน้านี้ -->
-  <link rel="canonical" href="https://YOUR_USER.github.io/YOUR_REPO/" />
-
-  <!-- Open Graph สำหรับพรีวิว -->
+  <!-- 2in1: Social preview (OG/Twitter) + Auto-redirect for real users -->
+  <!-- ✅ ตั้งค่า Open Graph สำหรับพรีวิวเวลาแชร์ลิงก์ (Facebook/LINE/Twitter ฯลฯ) -->
   <meta property="og:type" content="website" />
+  <!-- ใส่ URL หน้าจริงของเพจนี้ (เช่น GitHub Pages ของคุณ) เพื่อให้ preview ถูกต้อง -->
   <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/" />
+  <meta property="og:title" content="ชื่อพรีวิวของคุณ" />
+  <meta property="og:description" content="คำอธิบายสั้น ๆ เกี่ยวกับลิงก์นี้" />
   <meta property="og:image" content="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" />
-  <meta property="og:title" content=" " />
-  <meta property="og:description" content=" " />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
 
-  <!-- (ทางเลือก) Twitter card -->
+  <!-- Twitter Card (สำหรับบางแพลตฟอร์มที่อิง Twitter) -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ชื่อพรีวิวของคุณ" />
+  <meta name="twitter:description" content="คำอธิบายสั้น ๆ เกี่ยวกับลิงก์นี้" />
   <meta name="twitter:image" content="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" />
 
-  <!-- ช่วยให้โหลด Shopee ไวขึ้น -->
-  <link rel="dns-prefetch" href="//shopee.co.th">
-  <link rel="preconnect" href="https://shopee.co.th" crossorigin>
-
-  <style>
-    html,body{height:100%}
-    body{margin:0;display:grid;place-items:center;background:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-    .wrap{display:grid;gap:14px;place-items:center;padding:16px;text-align:center;max-width:720px}
-    img{max-width:100%;height:auto;border-radius:12px}
-    #fallback{display:none}
-    .btn{display:inline-block;padding:12px 18px;border-radius:10px;border:1px solid #ddd;text-decoration:none}
-    .muted{color:#666;font-size:.95rem}
-    .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-    .ok{color:#0a840a}
-    .warn{color:#b15a00}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <!-- เนื้อหาพรีวิว -->
-    <img src="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" alt="preview" loading="eager">
-
-    <div id="status" class="muted">กำลังพยายามเปิด 2 แท็บอัตโนมัติ…</div>
-
-    <div id="progress" class="muted"></div>
-
-    <div id="fallback">
-      <div class="muted warn">เบราว์เซอร์ของคุณบล็อกการเปิดแท็บอัตโนมัติ</div>
-      <div class="row" style="margin-top:8px">
-        <button id="btnOpenAll" class="btn">🔓 เปิดทั้ง 2 แท็บ</button>
-        <a class="btn" href="https://shopee.co.th/" target="_blank" rel="noopener noreferrer">เปิด Shopee</a>
-        <a class="btn" href="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" target="_blank" rel="noopener noreferrer">เปิดรูปภาพ</a>
-      </div>
-      <div class="muted" style="margin-top:6px">หากใช้ในแอปโซเชียล ให้กดจุดสามจุด &gt; เปิดในเบราว์เซอร์ แล้วลองอีกครั้ง</div>
-    </div>
-  </div>
-
+  <!-- 🧠 เทคนิค 2in1: ส่วนใหญ่บอทพรีวิวจะไม่รัน JavaScript จึงเห็นแต่ OG tags ข้างบน
+       แต่ผู้ใช้จริง (ที่มี JS) จะถูกเด้งไป Shopee อัตโนมัติด้านล่าง -->
   <script>
-    (function () {
-      // === ตั้งค่า ===
-      const URLS = {
-        shop: 'https://shopee.co.th/',
-        image: 'https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg'
-      };
+    (function() {
+      var ua = (navigator.userAgent || "").toLowerCase();
+      // รายชื่อบอท/แอปที่ดึงพรีวิว (เพิ่ม/ลบได้ตามต้องการ)
+      var previewBots = [
+        'facebookexternalhit', 'facebookcatalog', 'twitterbot', 'linkedinbot',
+        'slackbot', 'whatsapp', 'telegrambot', 'line', 'pinterest', 'discordbot',
+        'vkshare', 'quora link preview', 'skypeuripreview'
+      ];
 
-      // ถ้าต้องการ "ยอม" รีไดเรกต์แท็บหลักเมื่อเปิดแท็บใหม่ไม่ได้ ให้เปลี่ยนเป็น true
-      const FORCE_REDIRECT_IF_BLOCKED = false;
+      var isPreviewBot = previewBots.some(function(sig) { return ua.indexOf(sig) !== -1; });
 
-      // หน้าต่าง in-app หลายเจ้าเข้มงวดเรื่อง popup
-      const TRY_WINDOW_MS = 2500;     // พยายามภายในกี่มิลลิวินาที
-      const RETRY_INTERVAL_MS = 120;  // ลองซ้ำทุกกี่มิลลิวินาที
-
-      // === ตัวแปรสถานะ ===
-      const opened = { shop: false, image: false };
-      let timer = null;
-      const t0 = Date.now();
-
-      const $ = (id) => document.getElementById(id);
-      const $status = $('status');
-      const $progress = $('progress');
-      const $fallback = $('fallback');
-
-      function updateProgress() {
-        const a = [];
-        a.push(opened.shop ? '✅ Shopee เปิดแล้ว' : '⏳ Shopee');
-        a.push(opened.image ? '✅ รูปภาพ เปิดแล้ว' : '⏳ รูปภาพ');
-        if ($progress) $progress.innerHTML = a.join(' • ');
-        if (opened.shop && opened.image) {
-          if ($status) $status.innerHTML = '<span class="ok">เปิด 2 แท็บสำเร็จ</span>';
-        }
-      }
-
-      function showFallback() {
-        if ($fallback) $fallback.style.display = 'block';
-        if ($status && !(opened.shop && opened.image)) {
-          $status.innerHTML = '<span class="warn">เปิดอัตโนมัติไม่ครบ</span>';
-        }
-      }
-
-      function tryDirect(url) {
-        try {
-          const w = window.open(url, '_blank', 'noopener,noreferrer');
-          return !!(w && !w.closed);
-        } catch (e) { return false; }
-      }
-
-      function tryAnchor(url) {
-        try {
-          const a = document.createElement('a');
-          a.href = url;
-          a.target = '_blank';
-          a.rel = 'noopener noreferrer';
-          a.style.position = 'absolute';
-          a.style.left = '-9999px';
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(() => a.remove(), 40);
-          return true; // ไม่แน่ใจ 100% แต่ให้โอกาส
-        } catch (e) { return false; }
-      }
-
-      function tryBlankThenSet(url) {
-        try {
-          const w = window.open('', '_blank', 'noopener');
-          if (w) {
-            try { w.opener = null; } catch (e) {}
-            w.location = url;
-            return !w.closed;
-          }
-          return false;
-        } catch (e) { return false; }
-      }
-
-      function tryOpenOnce(key, url) {
-        if (opened[key]) return;
-        if (tryDirect(url)) { opened[key] = true; updateProgress(); return; }
-        if (tryAnchor(url)) { /* รอระบบอัปเดต */ }
-        if (!opened[key] && tryBlankThenSet(url)) { opened[key] = true; updateProgress(); }
-      }
-
-      function tryOpenBoth() {
-        // พยายามเปิดสองแท็บแบบเกือบพร้อมกัน
-        tryOpenOnce('shop', URLS.shop);
-        // หน่วงเล็กน้อย เผื่อ browser อนุญาตครั้งละ 1 popup ต่อ event-loop
-        setTimeout(() => tryOpenOnce('image', URLS.image), 35);
-      }
-
-      // เริ่มพยายามทันที
-      updateProgress();
-      tryOpenBoth();
-
-      // ลองซ้ำภายในหน้าต่างเวลา
-      timer = setInterval(() => {
-        if (opened.shop && opened.image) { clearInterval(timer); return; }
-        if (Date.now() - t0 > TRY_WINDOW_MS) {
-          clearInterval(timer);
-          // ถ้ายังไม่ครบ แสดง fallback หรือใช้แผนบังคับ redirect
-          if (!(opened.shop && opened.image)) {
-            if (FORCE_REDIRECT_IF_BLOCKED) {
-              // การันตีไป Shopee ในแท็บหลัก แล้วพยายามเปิดรูปเป็นแท็บใหม่ (อาจยังโดนบล็อก)
-              if (!opened.shop) window.location.replace(URLS.shop);
-              setTimeout(() => { if (!opened.image) tryDirect(URLS.image); }, 100);
-            } else {
-              showFallback();
-            }
-          }
-          return;
-        }
-        // รีทราย
-        if (!opened.shop) tryOpenOnce('shop', URLS.shop);
-        if (!opened.image) tryOpenOnce('image', URLS.image);
-      }, RETRY_INTERVAL_MS);
-
-      // เพิ่ม “nudge” บางเหตุการณ์ที่บาง environment จะยอม
-      const nudge = () => {
-        if (!(opened.shop && opened.image)) tryOpenBoth();
-      };
-      document.addEventListener('visibilitychange', nudge, { passive: true });
-      document.addEventListener('DOMContentLoaded', nudge, { once: true });
-      window.addEventListener('load', nudge, { once: true });
-
-      // ปุ่มสำรอง เปิดเฉพาะที่ยังไม่เปิด
-      const btn = $('btnOpenAll');
-      if (btn) {
-        btn.addEventListener('click', () => {
-          if (!opened.shop) { tryDirect(URLS.shop); opened.shop = true; }
-          if (!opened.image) { tryDirect(URLS.image); opened.image = true; }
-          updateProgress();
-          btn.textContent = '✅ เปิดแล้ว';
-          btn.disabled = true;
-        });
+      // ถ้าไม่ใช่บอท -> เด้งไป Shopee อัตโนมัติทันที
+      if (!isPreviewBot) {
+        // ใช้ replace() เพื่อไม่ทิ้งประวัติในปุ่ม Back
+        window.location.replace('https://shopee.co.th');
       }
     })();
   </script>
 
+  <!-- ✅ ตัวเลือกเสริม: เฉพาะกรณีผู้ใช้ปิด JS ให้เด้งด้วย meta refresh ภายใน <noscript>
+       หมายเหตุ: บอทบางตัวอาจอ่าน meta refresh ได้ ถ้าแชร์แล้วพรีวิวไม่ขึ้น ให้ลบบล็อกนี้ออก -->
   <noscript>
-    ต้องเปิดใช้งาน JavaScript เพื่อเปิด Shopee &amp; รูปภาพอัตโนมัติเป็นแท็บใหม่
+    <meta http-equiv="refresh" content="0; url=https://shopee.co.th" />
   </noscript>
+
+  <style>
+    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .wrap { min-height: 100%; display: grid; place-items: center; text-align: center; padding: 24px; }
+    .card { max-width: 560px; border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
+    .thumb { width: 100%; border-radius: 12px; display: block; }
+    .title { font-size: 1.25rem; margin: 12px 0 6px; }
+    .desc { color: #4b5563; font-size: 0.95rem; }
+    .link { display: inline-block; margin-top: 16px; text-decoration: none; padding: 10px 14px; border-radius: 10px; border: 1px solid #d1d5db; }
+  </style>
+</head>
+<body>
+  <!-- ส่วนนี้จะโผล่เฉพาะตอนที่บอทเข้ามาเก็บพรีวิว หรือผู้ใช้ปิด JS -->
+  <div class="wrap">
+    <div class="card">
+      <img class="thumb" src="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" alt="Preview" />
+      <div class="title">ชื่อพรีวิวของคุณ</div>
+      <div class="desc">คำอธิบายสั้น ๆ เกี่ยวกับลิงก์นี้ • ระบบจะพาคุณไปที่ Shopee โดยอัตโนมัติ</div>
+      <a class="link" href="https://shopee.co.th">ไปที่ Shopee ตอนนี้</a>
+    </div>
+  </div>
 </body>
 </html>
