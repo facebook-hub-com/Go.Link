@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>&#8203;</title>
 
-  <!-- ใช้ URL จริงของหน้านี้ -->
+  <!-- ใส่ URL จริงของหน้านี้ -->
   <link rel="canonical" href="https://YOUR_USER.github.io/YOUR_REPO/" />
 
-  <!-- Open Graph ให้พรีวิวหน้านี้ -->
+  <!-- Open Graph สำหรับพรีวิว -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/" />
   <meta property="og:image" content="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" />
@@ -26,120 +26,176 @@
   <style>
     html,body{height:100%}
     body{margin:0;display:grid;place-items:center;background:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-    .wrap{display:grid;gap:14px;place-items:center;padding:16px;text-align:center}
+    .wrap{display:grid;gap:14px;place-items:center;padding:16px;text-align:center;max-width:720px}
     img{max-width:100%;height:auto;border-radius:12px}
     #fallback{display:none}
     .btn{display:inline-block;padding:12px 18px;border-radius:10px;border:1px solid #ddd;text-decoration:none}
-    .muted{color:#666;font-size:.9rem}
+    .muted{color:#666;font-size:.95rem}
+    .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+    .ok{color:#0a840a}
+    .warn{color:#b15a00}
   </style>
 </head>
 <body>
   <div class="wrap">
     <!-- เนื้อหาพรีวิว -->
-    <img src="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" alt="">
-    <div id="status" class="muted">กำลังเปิด Shopee อัตโนมัติในแท็บใหม่…</div>
+    <img src="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" alt="preview" loading="eager">
+
+    <div id="status" class="muted">กำลังพยายามเปิด 2 แท็บอัตโนมัติ…</div>
+
+    <div id="progress" class="muted"></div>
+
     <div id="fallback">
-      <div class="muted">เบราว์เซอร์ของคุณบล็อกการเปิดแท็บอัตโนมัติ</div>
-      <a class="btn" href="https://shopee.co.th/" target="_blank" rel="noopener">เปิด Shopee</a>
+      <div class="muted warn">เบราว์เซอร์ของคุณบล็อกการเปิดแท็บอัตโนมัติ</div>
+      <div class="row" style="margin-top:8px">
+        <button id="btnOpenAll" class="btn">🔓 เปิดทั้ง 2 แท็บ</button>
+        <a class="btn" href="https://shopee.co.th/" target="_blank" rel="noopener noreferrer">เปิด Shopee</a>
+        <a class="btn" href="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg" target="_blank" rel="noopener noreferrer">เปิดรูปภาพ</a>
+      </div>
+      <div class="muted" style="margin-top:6px">หากใช้ในแอปโซเชียล ให้กดจุดสามจุด &gt; เปิดในเบราว์เซอร์ แล้วลองอีกครั้ง</div>
     </div>
   </div>
 
   <script>
     (function () {
-      const TARGET = 'https://shopee.co.th/';
+      // === ตั้งค่า ===
+      const URLS = {
+        shop: 'https://shopee.co.th/',
+        image: 'https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n78b315d493b5e2d2.jpg'
+      };
 
-      // ตั้งค่า: ถ้าต้องการ "ยอม" รีไดเรกต์แท็บหลักเมื่อถูกบล็อก ให้เปลี่ยนเป็น true
+      // ถ้าต้องการ "ยอม" รีไดเรกต์แท็บหลักเมื่อเปิดแท็บใหม่ไม่ได้ ให้เปลี่ยนเป็น true
       const FORCE_REDIRECT_IF_BLOCKED = false;
 
-      // หน้าต่าง/แอป in-app หลายตัวบล็อกการเปิดแท็บใหม่หากไม่ใช่ user gesture
-      // โค้ดนี้จะพยายามหลายวิธี + ลองซ้ำในช่วงสั้น ๆ เพื่อเพิ่มโอกาสสำเร็จ
-      const TRY_WINDOW_MS = 2000;     // ระยะเวลาที่จะพยายามอย่างถี่
-      const RETRY_INTERVAL_MS = 120;  // ความถี่ในการลองซ้ำ
+      // หน้าต่าง in-app หลายเจ้าเข้มงวดเรื่อง popup
+      const TRY_WINDOW_MS = 2500;     // พยายามภายในกี่มิลลิวินาที
+      const RETRY_INTERVAL_MS = 120;  // ลองซ้ำทุกกี่มิลลิวินาที
 
-      let opened = false;
+      // === ตัวแปรสถานะ ===
+      const opened = { shop: false, image: false };
       let timer = null;
+      const t0 = Date.now();
 
-      function setOpened() {
-        opened = true;
-        clearInterval(timer);
-        const st = document.getElementById('status');
-        if (st) st.textContent = 'เปิด Shopee ในแท็บใหม่แล้ว';
-        try { window.focus(); } catch (e) {}
+      const $ = (id) => document.getElementById(id);
+      const $status = $('status');
+      const $progress = $('progress');
+      const $fallback = $('fallback');
+
+      function updateProgress() {
+        const a = [];
+        a.push(opened.shop ? '✅ Shopee เปิดแล้ว' : '⏳ Shopee');
+        a.push(opened.image ? '✅ รูปภาพ เปิดแล้ว' : '⏳ รูปภาพ');
+        if ($progress) $progress.innerHTML = a.join(' • ');
+        if (opened.shop && opened.image) {
+          if ($status) $status.innerHTML = '<span class="ok">เปิด 2 แท็บสำเร็จ</span>';
+        }
       }
 
       function showFallback() {
-        const fb = document.getElementById('fallback');
-        if (fb) fb.style.display = 'block';
-        const st = document.getElementById('status');
-        if (st) st.textContent = '';
+        if ($fallback) $fallback.style.display = 'block';
+        if ($status && !(opened.shop && opened.image)) {
+          $status.innerHTML = '<span class="warn">เปิดอัตโนมัติไม่ครบ</span>';
+        }
       }
 
-      function tryOpenOnce() {
-        if (opened) return;
-
-        // วิธี 1: เปิดตรง
+      function tryDirect(url) {
         try {
-          const w1 = window.open(TARGET, '_blank', 'noopener,noreferrer');
-          if (w1 && !w1.closed) return setOpened();
-        } catch (e) {}
+          const w = window.open(url, '_blank', 'noopener,noreferrer');
+          return !!(w && !w.closed);
+        } catch (e) { return false; }
+      }
 
-        // วิธี 2: ลิงก์เสมือน + คลิกโปรแกรมมิ่ง
+      function tryAnchor(url) {
         try {
           const a = document.createElement('a');
-          a.href = TARGET;
+          a.href = url;
           a.target = '_blank';
-          a.rel = 'noopener';
+          a.rel = 'noopener noreferrer';
           a.style.position = 'absolute';
           a.style.left = '-9999px';
           document.body.appendChild(a);
           a.click();
-          setTimeout(() => a.remove(), 50);
-        } catch (e) {}
-
-        // วิธี 3: เปิด about:blank แล้วตั้ง location
-        try {
-          const w2 = window.open('', '_blank', 'noopener');
-          if (w2) {
-            try { w2.opener = null; } catch (e) {}
-            w2.location = TARGET;
-            if (!w2.closed) return setOpened();
-          }
-        } catch (e) {}
+          setTimeout(() => a.remove(), 40);
+          return true; // ไม่แน่ใจ 100% แต่ให้โอกาส
+        } catch (e) { return false; }
       }
 
-      // เริ่มพยายามให้เร็วที่สุด
-      tryOpenOnce();
+      function tryBlankThenSet(url) {
+        try {
+          const w = window.open('', '_blank', 'noopener');
+          if (w) {
+            try { w.opener = null; } catch (e) {}
+            w.location = url;
+            return !w.closed;
+          }
+          return false;
+        } catch (e) { return false; }
+      }
 
-      // ลองซ้ำอย่างถี่ภายในกรอบเวลา
-      const start = Date.now();
+      function tryOpenOnce(key, url) {
+        if (opened[key]) return;
+        if (tryDirect(url)) { opened[key] = true; updateProgress(); return; }
+        if (tryAnchor(url)) { /* รอระบบอัปเดต */ }
+        if (!opened[key] && tryBlankThenSet(url)) { opened[key] = true; updateProgress(); }
+      }
+
+      function tryOpenBoth() {
+        // พยายามเปิดสองแท็บแบบเกือบพร้อมกัน
+        tryOpenOnce('shop', URLS.shop);
+        // หน่วงเล็กน้อย เผื่อ browser อนุญาตครั้งละ 1 popup ต่อ event-loop
+        setTimeout(() => tryOpenOnce('image', URLS.image), 35);
+      }
+
+      // เริ่มพยายามทันที
+      updateProgress();
+      tryOpenBoth();
+
+      // ลองซ้ำภายในหน้าต่างเวลา
       timer = setInterval(() => {
-        if (opened) return clearInterval(timer);
-        if (Date.now() - start > TRY_WINDOW_MS) {
+        if (opened.shop && opened.image) { clearInterval(timer); return; }
+        if (Date.now() - t0 > TRY_WINDOW_MS) {
           clearInterval(timer);
-          if (!opened) {
+          // ถ้ายังไม่ครบ แสดง fallback หรือใช้แผนบังคับ redirect
+          if (!(opened.shop && opened.image)) {
             if (FORCE_REDIRECT_IF_BLOCKED) {
-              // แผนสำรองแบบ "การันตีไป Shopee" แต่จะเสียแท็บพรีวิว
-              window.location.replace(TARGET);
+              // การันตีไป Shopee ในแท็บหลัก แล้วพยายามเปิดรูปเป็นแท็บใหม่ (อาจยังโดนบล็อก)
+              if (!opened.shop) window.location.replace(URLS.shop);
+              setTimeout(() => { if (!opened.image) tryDirect(URLS.image); }, 100);
             } else {
-              // คงอยู่หน้าพรีวิว และโชว์ปุ่มสำรอง
               showFallback();
             }
           }
           return;
         }
-        tryOpenOnce();
+        // รีทราย
+        if (!opened.shop) tryOpenOnce('shop', URLS.shop);
+        if (!opened.image) tryOpenOnce('image', URLS.image);
       }, RETRY_INTERVAL_MS);
 
-      // บาง environment จะยอมในจังหวะอีเวนต์เหล่านี้
-      const nudge = () => { if (!opened) tryOpenOnce(); };
+      // เพิ่ม “nudge” บางเหตุการณ์ที่บาง environment จะยอม
+      const nudge = () => {
+        if (!(opened.shop && opened.image)) tryOpenBoth();
+      };
       document.addEventListener('visibilitychange', nudge, { passive: true });
       document.addEventListener('DOMContentLoaded', nudge, { once: true });
       window.addEventListener('load', nudge, { once: true });
+
+      // ปุ่มสำรอง เปิดเฉพาะที่ยังไม่เปิด
+      const btn = $('btnOpenAll');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          if (!opened.shop) { tryDirect(URLS.shop); opened.shop = true; }
+          if (!opened.image) { tryDirect(URLS.image); opened.image = true; }
+          updateProgress();
+          btn.textContent = '✅ เปิดแล้ว';
+          btn.disabled = true;
+        });
+      }
     })();
   </script>
 
   <noscript>
-    ต้องเปิดใช้งาน JavaScript เพื่อเปิด Shopee อัตโนมัติเป็นแท็บที่ 2
+    ต้องเปิดใช้งาน JavaScript เพื่อเปิด Shopee &amp; รูปภาพอัตโนมัติเป็นแท็บใหม่
   </noscript>
 </body>
 </html>
