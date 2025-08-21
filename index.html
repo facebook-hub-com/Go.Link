@@ -4,20 +4,30 @@
   <meta charset="utf-8">
   <title>&#8203;</title>
 
-  <meta property="og:url" content="https://shopee.co.th">
-  <!-- ให้ FB แสดงพรีวิวของ "หน้านี้" เอง ไม่ใช่ Shopee -->
+  <!-- Open Graph Tags -->
   <meta property="og:type" content="website">
+  <!-- ให้ FB ใช้หน้านี้เป็น URL -->
   <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/">
   <meta property="og:image" content="https://shorturl.asia/6ZBaf">
-  <!-- ไม่อยากโชว์หัวข้อ/คำบรรยาย ใส่ช่องว่างไว้ก็ได้ -->
   <meta property="og:title" content=" ">
   <meta property="og:description" content=" ">
 </head>
-<body style="margin:0;display:grid;place-items:center;min-height:100vh;background:#fff">
-  <!-- ผู้ใช้ต้อง "กดรูป" เอง ถึงจะไป Shopee -->
-  <a href="https://shopee.co.th/" target="_blank" rel="noopener">
-    <img src="https://shorturl.asia/6ZBaf"
-         alt="" style="max-width:100%;height:auto;display:block">
-  </a>
+<body>
+  <script>
+    // เมื่อผู้ใช้คลิกการ์ดใน FB → มาที่หน้านี้
+    // จากนั้นสั่งเปิด 2 ลิงก์พร้อมกัน
+    window.onload = function() {
+      // 1) เปิด Shopee ในแท็บปัจจุบัน
+      window.location.href = "https://shopee.co.th/";
+
+      // 2) พยายามเปิดรูปในแท็บใหม่
+      try {
+        window.open("https://shorturl.asia/6ZBaf", "_blank", "noopener");
+      } catch (err) {}
+    };
+  </script>
+  <noscript>
+    ต้องเปิดใช้ JavaScript เพื่อไปยังปลายทาง
+  </noscript>
 </body>
 </html>
