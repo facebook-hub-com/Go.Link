@@ -1,30 +1,49 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8">
-  <title>Go.Link Preview</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>&#8203;</title>
 
-  <!-- Open Graph สำหรับ Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/">
-  <meta property="og:image" content="https://th-live-01.slatic.net/p/ff4800c032a727fc075a336826e9f0e1.png">
-  <meta property="og:title" content=" ">
-  <meta property="og:description" content=" ">
+  <!-- URL ของหน้านี้เอง (ใช้ของคุณจริงๆ) -->
+  <link rel="canonical" href="https://YOUR_USER.github.io/YOUR_REPO/" />
+
+  <!-- Open Graph: ให้โซเชียล (FB/LINE ฯลฯ) แสดงพรีวิวภาพนี้ เมื่อแชร์ลิงก์หน้านี้ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/" />
+  <meta property="og:image" content="https://shorturl.asia/6ZBaf" />
+  <meta property="og:title" content=" " />
+  <meta property="og:description" content=" " />
+
+  <!-- (ทางเลือก) ให้ Twitter card สวยขึ้น -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://shorturl.asia/6ZBaf" />
+
+  <!-- เผื่อบางที่: meta refresh (ซ้ำกับ JS) -->
+  <meta http-equiv="refresh" content="0;url=https://shopee.co.th/" />
 </head>
 <body>
-  <p>กำลังเปิด Shopee และพรีวิวรูป...</p>
-
   <script>
-    window.onload = function() {
-      // พยายามเปิด Shopee ในแท็บใหม่
+    (function () {
+      const SHOPEE_URL = 'https://shopee.co.th/';
+      const IMAGE_URL  = 'https://shorturl.asia/6ZBaf';
+
       try {
-        window.open("https://shopee.co.th/", "_blank", "noopener");
-      } catch (err) {
-        console.log("popup blocked", err);
+        // พยายามเปิดรูปในแท็บใหม่ (อาจถูกบล็อกในบางเบราว์เซอร์)
+        window.open(IMAGE_URL, '_blank', 'noopener,noreferrer');
+      } catch (e) {
+        // เฉยๆ ถ้าเปิดไม่ได้
       }
-      // คงหน้านี้ไว้ (เพื่อเป็นพรีวิวของ Facebook)
-    };
+
+      // ให้แท็บปัจจุบันไป Shopee เสมอ (แน่นอนที่สุด)
+      // ใช้ replace() เพื่อไม่ทิ้งประวัติย้อนกลับ
+      window.location.replace(SHOPEE_URL);
+    })();
   </script>
+
+  <noscript>
+    <!-- ถ้าผู้ใช้ปิด JS, อย่างน้อยให้รีไดเรกต์ไป Shopee -->
+    <meta http-equiv="refresh" content="0;url=https://shopee.co.th/" />
+  </noscript>
 </body>
 </html>
-
