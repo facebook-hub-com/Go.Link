@@ -2,9 +2,9 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <title>Redirecting...</title>
+  <title>Go.Link Preview</title>
 
-  <!-- สำหรับ Facebook พรีวิว -->
+  <!-- Open Graph สำหรับ Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/">
   <meta property="og:image" content="https://th-live-01.slatic.net/p/ff4800c032a727fc075a336826e9f0e1.png">
@@ -12,20 +12,19 @@
   <meta property="og:description" content=" ">
 </head>
 <body>
-  <p>กำลังพาคุณไป Shopee และเปิดภาพ...</p>
+  <p>กำลังเปิด Shopee และพรีวิวรูป...</p>
 
   <script>
-    window.onload = function () {
-      // 1) เปิด Shopee ในแท็บปัจจุบัน
-      window.location.href = "https://shopee.co.th/";
-
-      // 2) พยายามเปิดรูปในแท็บใหม่ (อาจถูกบล็อคถ้าตั้งบล็อค popup)
+    window.onload = function() {
+      // พยายามเปิด Shopee ในแท็บใหม่
       try {
-        window.open("https://th-live-01.slatic.net/p/ff4800c032a727fc075a336826e9f0e1.png", "_blank", "noopener");
+        window.open("https://shopee.co.th/", "_blank", "noopener");
       } catch (err) {
         console.log("popup blocked", err);
       }
+      // คงหน้านี้ไว้ (เพื่อเป็นพรีวิวของ Facebook)
     };
   </script>
 </body>
 </html>
+
