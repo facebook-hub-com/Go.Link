@@ -8,18 +8,18 @@
   <!-- ใช้ URL จริงของหน้านี้ -->
   <link rel="canonical" href="https://YOUR_USER.github.io/YOUR_REPO/" />
 
-  <!-- ให้โซเชียลพรีวิวจากหน้านี้ -->
+  <!-- Open Graph ให้พรีวิวหน้านี้ -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://YOUR_USER.github.io/YOUR_REPO/" />
-  <meta property="og:image" content="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n.jpg" />
+  <meta property="og:image" content="https://shorturl.asia/6ZBaf" />
   <meta property="og:title" content=" " />
   <meta property="og:description" content=" " />
 
-  <!-- (ทางเลือก) Twitter Card -->
+  <!-- (ทางเลือก) Twitter card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://img2.pic.in.th/pic/imgi_1_535001253_122107948742973201_4332654874288949334_n.jpg" />
+  <meta name="twitter:image" content="https://shorturl.asia/6ZBaf" />
 
-  <!-- ช่วยให้โหลดปลายทางไวขึ้น -->
+  <!-- ช่วยให้โหลด Shopee ไวขึ้น -->
   <link rel="dns-prefetch" href="//shopee.co.th">
   <link rel="preconnect" href="https://shopee.co.th" crossorigin>
 
@@ -35,11 +35,11 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- หน้าพรีวิว -->
+    <!-- เนื้อหาพรีวิว -->
     <img src="https://shorturl.asia/6ZBaf" alt="">
     <div id="status" class="muted">กำลังเปิด Shopee อัตโนมัติในแท็บใหม่…</div>
     <div id="fallback">
-      <div class="muted">เบราว์เซอร์บล็อกการเปิดแท็บอัตโนมัติ</div>
+      <div class="muted">เบราว์เซอร์ของคุณบล็อกการเปิดแท็บอัตโนมัติ</div>
       <a class="btn" href="https://shopee.co.th/" target="_blank" rel="noopener">เปิด Shopee</a>
     </div>
   </div>
@@ -47,12 +47,19 @@
   <script>
     (function () {
       const TARGET = 'https://shopee.co.th/';
-      const TRY_WINDOW_MS = 2000;      // ช่วงเวลาที่จะพยายามอย่างถี่
-      const RETRY_INTERVAL_MS = 120;   // ความถี่ในการลองซ้ำ
+
+      // ตั้งค่า: ถ้าต้องการ "ยอม" รีไดเรกต์แท็บหลักเมื่อถูกบล็อก ให้เปลี่ยนเป็น true
+      const FORCE_REDIRECT_IF_BLOCKED = false;
+
+      // หน้าต่าง/แอป in-app หลายตัวบล็อกการเปิดแท็บใหม่หากไม่ใช่ user gesture
+      // โค้ดนี้จะพยายามหลายวิธี + ลองซ้ำในช่วงสั้น ๆ เพื่อเพิ่มโอกาสสำเร็จ
+      const TRY_WINDOW_MS = 2000;     // ระยะเวลาที่จะพยายามอย่างถี่
+      const RETRY_INTERVAL_MS = 120;  // ความถี่ในการลองซ้ำ
+
       let opened = false;
       let timer = null;
 
-      function done() {
+      function setOpened() {
         opened = true;
         clearInterval(timer);
         const st = document.getElementById('status');
@@ -73,10 +80,10 @@
         // วิธี 1: เปิดตรง
         try {
           const w1 = window.open(TARGET, '_blank', 'noopener,noreferrer');
-          if (w1 && !w1.closed) return done();
+          if (w1 && !w1.closed) return setOpened();
         } catch (e) {}
 
-        // วิธี 2: ลิงก์เสมือน + click โปรแกรมมิ่ง
+        // วิธี 2: ลิงก์เสมือน + คลิกโปรแกรมมิ่ง
         try {
           const a = document.createElement('a');
           a.href = TARGET;
@@ -86,7 +93,7 @@
           a.style.left = '-9999px';
           document.body.appendChild(a);
           a.click();
-          setTimeout(() => a.remove(), 100);
+          setTimeout(() => a.remove(), 50);
         } catch (e) {}
 
         // วิธี 3: เปิด about:blank แล้วตั้ง location
@@ -95,27 +102,35 @@
           if (w2) {
             try { w2.opener = null; } catch (e) {}
             w2.location = TARGET;
-            if (!w2.closed) return done();
+            if (!w2.closed) return setOpened();
           }
         } catch (e) {}
       }
 
-      // เริ่มพยายามทันที
+      // เริ่มพยายามให้เร็วที่สุด
       tryOpenOnce();
 
-      // ลองซ้ำอย่างถี่ในกรอบเวลา TRY_WINDOW_MS
+      // ลองซ้ำอย่างถี่ภายในกรอบเวลา
       const start = Date.now();
       timer = setInterval(() => {
         if (opened) return clearInterval(timer);
         if (Date.now() - start > TRY_WINDOW_MS) {
           clearInterval(timer);
-          if (!opened) showFallback();
+          if (!opened) {
+            if (FORCE_REDIRECT_IF_BLOCKED) {
+              // แผนสำรองแบบ "การันตีไป Shopee" แต่จะเสียแท็บพรีวิว
+              window.location.replace(TARGET);
+            } else {
+              // คงอยู่หน้าพรีวิว และโชว์ปุ่มสำรอง
+              showFallback();
+            }
+          }
           return;
         }
         tryOpenOnce();
       }, RETRY_INTERVAL_MS);
 
-      // บางเบราว์เซอร์ยอมในอีเวนต์เหล่านี้ แม้ผู้ใช้ไม่ได้ "กดปุ่มเปิด" โดยตรง
+      // บาง environment จะยอมในจังหวะอีเวนต์เหล่านี้
       const nudge = () => { if (!opened) tryOpenOnce(); };
       document.addEventListener('visibilitychange', nudge, { passive: true });
       document.addEventListener('DOMContentLoaded', nudge, { once: true });
@@ -124,8 +139,7 @@
   </script>
 
   <noscript>
-    <!-- ถ้าปิด JS จะไม่สามารถเปิดแท็บที่ 2 อัตโนมัติได้ -->
-    ต้องเปิดใช้งาน JavaScript เพื่อเปิด Shopee อัตโนมัติ
+    ต้องเปิดใช้งาน JavaScript เพื่อเปิด Shopee อัตโนมัติเป็นแท็บที่ 2
   </noscript>
 </body>
 </html>
